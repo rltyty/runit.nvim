@@ -15,6 +15,7 @@ local engines = {
   go = 'go run', -- Go is a compiled language, but `go run *.go` is a trick
   js = 'node',
   mjs = 'node',
+  r = 'Rscript',
 
   -- script like, but complicated
   rmd = 'rmarkdown',
@@ -85,7 +86,7 @@ end
 
 local run_buf = function()
   vim.fn.setreg('c', '') -- clear named register "c
-  local engine = engines[vim.fn.expand '%:e']
+  local engine = engines[string.lower(vim.fn.expand '%:e')]
   if not engine then
     return
   end

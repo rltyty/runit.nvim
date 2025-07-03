@@ -4,8 +4,8 @@ A Neovim plugin for running code in current buffer.
 ## INTRODUCTION
 
 This plugin is a tool for running code in current buffer. Many popular
-languages like C, Java, Python, Go, Perl, Shell, Lua, Rmarkdown, etc. are
-supported.
+languages like C, Java, Python, Go, JS, Perl, Shell, Lua, R, Rmarkdown, etc.
+are supported.
 
 ## Usage
 
