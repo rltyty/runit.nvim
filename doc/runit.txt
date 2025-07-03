@@ -1,19 +1,27 @@
-*runit.txt*  Plugin for running code
+INTRODUCTION                                                          *runit*
 
-Author:  rltyty <except10n.rlt@gmail.com>
+==============================================================================
+TABLE OF CONTENTS                                     *runit-toc* *runit-TOC*
 
-INTRODUCTION                                    *runit*
+  INTRODUCTION                                       |runit|
+  COMMANDS                                           |runit_commands|
+  MAPPINGS                                           |runit_mappings|
+  CONFIGURATION                                      |runit_configuration|
+==============================================================================
+
+Author:         rltyty <except10n.rlt@gmail.com>
+Last updated:   2025-07-03
 
 This plugin is a tool for running code in current buffer. Many popular
 languages like C, Java, Python, Go, Perl, Shell, Lua, Rmarkdown, etc. are
 supported.
 
-COMMANDS                                        *runit-commands*
+COMMANDS                                                     *runit_commands*
 
   :RunBuf                 Run the code
   :RunBufArgs             Run the code with arguments
 
-MAPPINGS                                        *runit-mappings*
+MAPPINGS                                                     *runit_mappings*
 
 The default mapping:
 
@@ -22,7 +30,7 @@ The default mapping:
 
 NOTE: <F16> is SHIFT + <F4>
 
-CONFIGURATION                                   *runit-configuration*
+CONFIGURATION                                           *runit_configuration*
 
 >lua
   require("runit").setup({
