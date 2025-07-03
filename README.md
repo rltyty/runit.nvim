@@ -7,25 +7,18 @@ This plugin is a tool for running code in current buffer. Many popular
 languages like C, Java, Python, Go, Perl, Shell, Lua, Rmarkdown, etc. are
 supported.
 
-## COMMANDS
+## Usage
 
-  `:RunBuf`                 Run the code
 
-  `:RunBufArgs`             Run the code with arguments
+|Command        |Default key mapping|Description|
+|--------|-------------------           |-----------|
+|`:RunBuf`| `<F4>`         |  Run the code|
+| `:RunBufArgs` | `<F16>` (`SHIFT+<F4>` or `<S-F4>`) |Run the code with arguments|
 
-## MAPPINGS
 
-The default mapping:
+## Installation
 
-  `<F4>`                    `:RunBuf`
-
-  `<F16>`                   `:RunBufArgs`
-
-NOTE: `<F16>` is `SHIFT + <F4>`
-
-## CONFIGURATION
-
-- With lazy.nvim,
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
   {
@@ -36,9 +29,9 @@ NOTE: `<F16>` is `SHIFT + <F4>`
   },
 ```
 
-- Customize key mapping
+## CONFIGURATION
 
-  - Disable key mapping,
+- Disable key mapping,
 
 ```lua
   require("runit").setup({
@@ -46,7 +39,7 @@ NOTE: `<F16>` is `SHIFT + <F4>`
   })
 ```
 
-  - Change key mapping,
+- Change key mapping,
 
 ```lua
   require("runit").setup({
