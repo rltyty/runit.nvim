@@ -10,6 +10,7 @@ supported.
 ## COMMANDS
 
   `:RunBuf`                 Run the code
+
   `:RunBufArgs`             Run the code with arguments
 
 ## MAPPINGS
@@ -17,6 +18,7 @@ supported.
 The default mapping:
 
   `<F4>`                    `:RunBuf`
+
   `<F16>`                   `:RunBufArgs`
 
 NOTE: `<F16>` is `SHIFT + <F4>`
@@ -40,7 +42,7 @@ NOTE: `<F16>` is `SHIFT + <F4>`
 
 ```lua
   require("runit").setup({
-    key = false,             -- false: disable key mapping
+    key = false,
   })
 ```
 
@@ -49,7 +51,7 @@ NOTE: `<F16>` is `SHIFT + <F4>`
 ```lua
   require("runit").setup({
     run_key = "<F4>",
-    run_args_key = "<F16>",  -- run with args input. <F-16> instead of <S-F4>
+    run_args_key = "<F16>",
   })
 ```
 
