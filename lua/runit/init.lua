@@ -5,6 +5,8 @@
 --
 -- Run the code in the current buffer or its corresponding executable.
 --
+local M = {}
+
 -- Logic
 local engines = {
   -- script like
@@ -30,25 +32,15 @@ local cmd_strs = {}
 
 cmd_strs.c = function()
   local targets = { 'Debug', 'Release', 'debug', 'release', 'build' }
-  local binpath = vim.fn.expand '%:r'
+  local binpath = vim.fn.fnamemodify(vim.fn.expand("%:r"), ":.")
   local root = vim.fs.root(0, targets)
   if root then
     for _, t in ipairs(targets) do
       local s = vim.uv.fs_stat(root .. '/' .. t)
       if s and s.type == 'directory' then
-        -- e.g.
-        -- root    = '/User/<login>/wksp/prjA'
-        -- if
-        -- binpath = '/User/<login>/wksp/prjA/mod/a'
-        -- result  = '/User/<login>/wksp/prjA/Debug/mod/a'
-        -- else
-        -- binpath = 'mod/a"
-        -- result  = 'Debug/mod/a'
-        if string.match(binpath, '^' .. vim.pesc(root)) then
+        if vim.startswith(binpath, M.opts.src_prefix) then
           binpath = vim.fn.fnamemodify(
-            binpath,
-            ':s?^' .. root .. '?' .. root .. '/' .. t .. '?'
-          )
+            binpath, ':s?^' .. M.opts.src_prefix .. '/?' .. t .. '/?')
         else
           binpath = t .. '/' .. binpath
         end
@@ -116,40 +108,42 @@ end
 
 -- Module
 --
-local M = {}
 
 -- Default options
 M.opts = {
   key = true,             -- false: disable key mapping
   run_key = "<F4>",
   run_args_key = "<F16>", -- run with args input. <F-16> instead of <S-F4>
+  src_prefix = "src",
+  test_prefix = "src",
 }
 
 -- Configuration
 function M.setup(user_opts)
   M.opts = vim.tbl_extend("force", M.opts, user_opts or {})
-  M.setup_keymap()
   M.create_commands()
+  M.setup_keymap()
+end
+
+-- create RunBuf* commands
+function M.create_commands()
+  vim.api.nvim_create_user_command("RunBuf", run_buf_no_args,
+  { desc = "Run buffer code" })
+  vim.api.nvim_create_user_command("RunBufArgs", run_buf_args,
+  { desc = "Run buffer code (args)" })
 end
 
 -- Key map
 function M.setup_keymap()
   if M.opts.key == false then return end
   if M.opts.run_key and M.opts.run_key ~= "" then
-    vim.keymap.set("n", M.opts.run_key, run_buf_no_args,
+    vim.keymap.set("n", M.opts.run_key, '<Cmd>RunBuf<CR>',
       { desc = "Run buffer code", noremap = true, silent = true, })
   end
   if M.opts.run_args_key and M.opts.run_args_key ~= "" then
-    vim.keymap.set("n", M.opts.run_args_key, run_buf_args,
+    vim.keymap.set("n", M.opts.run_args_key, '<Cmd>RunBufArgs<CR>',
       { desc = "Run buffer code (args)", noremap = true, silent = true, })
   end
-end
-
-function M.create_commands()
-  vim.api.nvim_create_user_command("RunBuf", run_buf_no_args,
-  { desc = "Run buffer code" })
-  vim.api.nvim_create_user_command("RunBufArgs", run_buf_args,
-  { desc = "Run buffer code (args)" })
 end
 
 return M
