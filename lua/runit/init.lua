@@ -22,13 +22,14 @@ local engines = {
 
   -- executable, compilation required before run it
   c = 'c',
+  cpp = 'c',
   java = 'java', -- JEP 330, Java 11, Launch Single-File Source-Code Programs
 }
 
 local cmd_strs = {}
 
 cmd_strs.c = function()
-  local targets = { 'Debug', 'Release', 'debug', 'release' }
+  local targets = { 'Debug', 'Release', 'debug', 'release', 'build' }
   local binpath = vim.fn.expand '%:r'
   local root = vim.fs.root(0, targets)
   if root then
