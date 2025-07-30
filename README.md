@@ -4,7 +4,7 @@ Neovim plugin for one-click code execution
 ## INTRODUCTION
 
 This plugin makes running code in your current buffer lightning fast and
-incredibly simple.. Many popular languages like C, Java, Python, Go, JS, Perl,
+incredibly simple. Many popular languages like C, Java, Python, Go, JS, Perl,
 Shell, Lua, R, Rmarkdown, etc. are supported.
 
 ## Usage
