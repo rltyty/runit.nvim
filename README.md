@@ -1,11 +1,11 @@
 # runit.nvim
-A Neovim plugin for running code in current buffer.
+Neovim plugin for one-click code execution
 
 ## INTRODUCTION
 
-This plugin is a tool for running code in current buffer. Many popular
-languages like C, Java, Python, Go, JS, Perl, Shell, Lua, R, Rmarkdown, etc.
-are supported.
+This plugin makes running code in your current buffer lightning fast and
+incredibly simple.. Many popular languages like C, Java, Python, Go, JS, Perl,
+Shell, Lua, R, Rmarkdown, etc. are supported.
 
 ## Usage
 
