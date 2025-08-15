@@ -117,7 +117,7 @@ called explicitly or `exit()` automatically flushes and closes streams at
 program termination.
 
 Meanwhile, `system("date")` spawns (`fork()` + `exec()`) a child process to
-run the `date` command. The child inherits (during `fork()`) a copy of its
+run the `date` command. The child inherits, during `fork()`, a copy of its
 parent's open file descriptors, including `STDOUT_FILENO`, which still points
 to the same file table entry and further the same pipe. The child also inherits
 the parent's file streams and their buffers, so the child's `stdout` buffer
@@ -132,7 +132,7 @@ rules dictate.
 If you do need the "expected" order, either run the program in a terminal or
 **change** the code:
 
-- Explicit `fflush`
+- Option 1 : Explicit `fflush`
 
 ```c
 printf("Main process says hi\n");
@@ -140,7 +140,7 @@ fflush(stdout);
 system("date");
 ```
 
-- Disable buffer for `stdout`
+- Option 2: Disable buffer for `stdout`
 
 ```c
 setvbuf(stdout, NULL, _IONBF, 0);
