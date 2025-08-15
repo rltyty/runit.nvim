@@ -104,11 +104,11 @@ Main process says hi
 Fri Aug 15 14:42:55 CST 2025
 ```
 
-**Reason**: When executed in Neovim, the process's `stdout` stream is
-connected to a pipe, not a terminal (TTY). The C standard library chooses the
-buffer mode of the stream based on the file type. TTY -> line-buffered,
-otherwise -> fully-buffered. Therefore, in Neovim, the output is
-fully-buffered, whereas in a terminal it is line-buffered.
+**Reason for the Discrepancy**: When executed in Neovim, the process's
+`stdout` stream is connected to a pipe, not a terminal (TTY). The C standard
+library chooses the buffer mode of the stream based on the file type. TTY ->
+line-buffered, otherwise -> fully-buffered. Therefore, in Neovim, the output
+is fully-buffered, whereas in a terminal it is line-buffered.
 
 In the program above, although the `printf` message ends with `\n`
 (which normally triggers a unbuffered `write(2)` system call immediately in a
