@@ -119,15 +119,22 @@ program termination.
 Meanwhile, `system("date")` spawns (`fork()` + `exec()`) a child process to
 run the `date` command. The child inherits, during `fork()`, a copy of its
 parent's open file descriptors, including `STDOUT_FILENO`, which still points
-to the same file table entry and further the same pipe. The child also inherits
-the parent's file streams and their buffers, so the child's `stdout` buffer
-also contains "Main process says hi". However, when `exec()` loads the `date`
-program, the child gets fresh process image with new program `date`, fresh file
-streams, empty buffers. After `date` is done, it `exit()`s with all
-its file streams getting `flush()`ed and `close()`d, so we can see the
-date output right way. As long as the parent finishes after the child, the output
-order will appear "unexpected". In reality, it is exactly what buffering
-rules dictate.
+to the same file table entry and further the same pipe. The child also
+inherits the parent's file streams and their buffers, so the child's `stdout`
+buffer also contains "Main process says hi". However, when `exec()` loads the
+`date` program, the child gets fresh process image with new program `date`,
+fresh file streams, empty buffers. After `date` is done, it `exit()`s with all
+its file streams getting `flush()`ed and `close()`d, so we can see the date
+output right way. As long as the parent finishes after the child, the output
+order will appear "unexpected". In reality, it is exactly what buffering rules
+dictate. It's also the case when you redirect the output to a file.
+
+```sh
+> ./Debug/test/a.out > log
+> cat log
+Sat Aug 16 12:16:05 CST 2025
+Main process says hi
+```
 
 If you do need the "expected" order, either run the program in a terminal or
 **change** the code:
