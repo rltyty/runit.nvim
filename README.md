@@ -110,24 +110,27 @@ library chooses the buffer mode of the stream based on the file type. TTY ->
 line-buffered, otherwise -> fully-buffered. Therefore, in Neovim, the output
 is fully-buffered, whereas in a terminal it is line-buffered.
 
-In the program above, although the `printf` message ends with `\n`
-(which normally triggers a unbuffered `write(2)` system call immediately in a
-terminal), in Neovim, it will not be written until either `fflush(stdout)` is
-called explicitly or `exit()` automatically flushes and closes streams at
-program termination.
+In the program above, although the `printf(3)` message ends with `\n` — which
+normally triggers `fflush(3)` in line-buffered mode (i.e. when running in a
+terminal), which in turn calls the underlying `write(2)` syscall — in Neovim,
+`stdout` is fully-buffered, so `\n` has no special effect. `fflush(3)` will
+not be called until the buffer is full, or unless called explicitly. Calling
+`exit(3)` also flushes and closes all streams at program termination.
 
-Meanwhile, `system("date")` spawns (`fork()` + `exec()`) a child process to
-run the `date` command. The child inherits, during `fork()`, a copy of its
-parent's open file descriptors, including `STDOUT_FILENO`, which still points
-to the same file table entry and further the same pipe. The child also
-inherits the parent's file streams and their buffers, so the child's `stdout`
-buffer also contains "Main process says hi". However, when `exec()` loads the
-`date` program, the child gets fresh process image with new program `date`,
-fresh file streams, empty buffers. After `date` is done, it `exit()`s with all
-its file streams getting `flush()`ed and `close()`d, so we can see the date
-output right way. As long as the parent finishes after the child, the output
-order will appear "unexpected". In reality, it is exactly what buffering rules
-dictate. It's also the case when you redirect the output to a file.
+Meanwhile, `system(3)` spawns (`fork(2)` + `exec(3)` -> `exeve(2)`) a child
+process to run the `date` command. The child inherits, during `fork(2)`, a
+copy of its parent's open file descriptors, including `STDOUT_FILENO`, which
+still points to the same file table entry and further the same pipe. The child
+also inherits the parent's file streams and their buffers (copy-on-write), so
+the child's `stdout` buffer also contains "Main process says hi". However,
+when `execve(2)` loads the `date` program, the child gets a fresh process
+image — user space memory is wiped, giving it fresh file streams and empty
+buffers. After `date` is done, it calls `exit(3)`s, which `fflush(3)`es and
+`close(2)`s all its file streams, so we can see the date output right away.
+As long as the parent finishes after the child — `system(3)` guarantees this
+via `waitpid(2)` after the spawn — the output order will appear "unexpected".
+In reality, it is exactly what buffering rules dictate. It's also the case when
+you redirect the output to a file.
 
 ```sh
 > ./Debug/test/a.out > log
@@ -139,7 +142,7 @@ Main process says hi
 If you do need the "expected" order, either run the program in a terminal or
 **change** the code:
 
-- Option 1 : Explicit `fflush`
+- Option 1 : Flush the C library buffer explicitly before `system(3)`
 
 ```c
 printf("Main process says hi\n");
@@ -147,7 +150,9 @@ fflush(stdout);
 system("date");
 ```
 
-- Option 2: Disable buffer for `stdout`
+- Option 2: Disable the C library buffer for `stdout`
+
+Must be called before any I/O on `stdout`, typically at the start of `main()`.
 
 ```c
 setvbuf(stdout, NULL, _IONBF, 0);
