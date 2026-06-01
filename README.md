@@ -73,6 +73,10 @@ Create a `.nvim.lua` (See `h: exrc`) under the project root directory.
   })
 ```
 
+## Features
+
+- Maven POM support: auto-resolves and caches classpath for running Java classes
+
 ## FAQ
 
 ### Multi-process Output Order Problem
