@@ -56,13 +56,35 @@ cmd_strs.c = function()
   return binpath
 end
 
+local _cp_cache = {}
+-- automatically invalidates the cache whenever pom.xml is updated
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "pom.xml",
+  callback = function()
+    _cp_cache = {}
+    vim.notify("Maven classpath cache cleared.", vim.log.levels.INFO, { title = "runit:java" })
+  end,
+})
+
 cmd_strs.java = function()
+
+  local function get_maven_classpath()
+    local cwd = vim.fn.getcwd()
+    if not _cp_cache[cwd] then
+      vim.notify("Maven class path retrieved and cached...", vim.log.levels.INFO, { title = "runit:java" })
+      local cp = vim.fn.system("mvn dependency:build-classpath -DforceStdout 2>&1 | grep '^/'")
+      _cp_cache[cwd] = cp:gsub("\n", "")
+    end
+    return _cp_cache[cwd]
+  end
+
   local cmd = {}
   local relpath = vim.fn.fnamemodify(vim.fn.expand '%:r', ':.')
   local cls = string.gsub(relpath, '/', '.')
-  if vim.fs.root(0, { 'pom.xml' }) then
+  if vim.fs.root(0, { 'pom.xml' }) then -- mvn project
     cls = string.gsub(cls, 'src.%w+.java.', '') -- remove 'src/{main|test}/java'
-    cmd = { 'java', '-cp target/classes:target/test-classes', cls }
+    local full_cp = "target/classes:target/test-classes:" .. get_maven_classpath()
+    cmd = { 'java', '-cp ' .. full_cp, cls }
   else
     cmd = { 'java', '-cp .', '%' } -- JEP 330: Launch Single-File Source-Code Programs
   end
